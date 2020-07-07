@@ -1,0 +1,30 @@
+#!/bin/bash
+# Build Path: /app/.heroku/php/
+#dep_url=git://github.com/phalcon/cphalcon.git
+dep_url=git://github.com/msgpack/msgpack-php.git
+#msgpack_dir=msgpack-php
+echo "-----> Building msgpack..."
+
+## msgpack
+echo "[LOG] Downloading msgpackPHP"
+git clone $dep_url -q
+#if [ ! -d "$msgpack_dir" ]; then
+#  echo "[ERROR] Failed to find msgpackphp directory $msgpack_dir"
+#  exit
+#fi
+#cd $msgpack_dir/build
+
+/app/php/bin/phpize
+./configure --enable-msgpack --with-php-config=$PHP_ROOT/bin/php-config
+make
+make install
+
+BUILD_DIR=$1
+ln -s $BUILD_DIR/.heroku /app/.heroku
+export PATH=/app/.heroku/php/bin:$PATH
+bash ./install
+cd
+echo "important extension msgpack into php.ini"
+echo "extension=msgpack.so" >> /app/.heroku/php/etc/php/php.ini
+
+#https://github.com/msgpack/msgpack-php.git
